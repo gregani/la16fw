@@ -1,5 +1,5 @@
 --
--- This file is part of the lafw16 project.
+-- This file is part of the la16fw project.
 --
 -- Copyright (C) 2014-2015 Gregor Anich
 --
