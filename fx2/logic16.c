@@ -61,7 +61,6 @@ static __xdata BYTE led_table[64] = {0};
 static BOOL led_run = FALSE;
 static BOOL led_repeat = FALSE;
 static BYTE led_div = 0;
-static BYTE message[] = "Get out!";
 
 /* logic16 specific ep1 encode/decode functions */
 
