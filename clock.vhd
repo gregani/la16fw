@@ -52,7 +52,7 @@ begin
             CLKFX_DIVIDE          => CLK_FAST_DIV,
             CLKFX_MULTIPLY        => CLK_FAST_MUL,         -- 100MHz on CLKFX
             CLKIN_DIVIDE_BY_2     => FALSE,
-            CLKIN_PERIOD          => 20.833,               -- 48MHz
+            CLKIN_PERIOD          => 20.83333333333333333, -- 48MHz
             CLKOUT_PHASE_SHIFT    => "NONE",               -- Specify phase shift of "NONE", "FIXED" or "VARIABLE" 
             CLK_FEEDBACK          => "1X",                 -- Specify clock feedback of "NONE", "1X" or "2X" 
             DESKEW_ADJUST         => "SYSTEM_SYNCHRONOUS", -- "SOURCE_SYNCHRONOUS", "SYSTEM_SYNCHRONOUS" or an integer from 0 to 15

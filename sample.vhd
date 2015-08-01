@@ -76,7 +76,7 @@ architecture behavioral of sample is
     attribute TIG of sample_rate_divisor : signal is "TRUE";
     attribute TIG of channel_select : signal is "TRUE";
     
-	 signal DEBUG : boolean := false;--true;
+    signal DEBUG : boolean := false;--true;
     signal count : unsigned(31 downto 0);
     signal wait_write : std_logic := '0';
     
@@ -160,19 +160,19 @@ begin
             end if;
             
             --debug
-				if DEBUG then
-					fifo_write_int <= '0';
-					wait_write <= '0';
-					if (sample_run_get = '1') and (fifo_ready = '1') and
-						( (fifo_almost_full = '0') or ((fifo_write_int = '0') and (fifo_full = '0')) ) and
-						(wait_write = '0') then--and (count /= 176*1024) then
-						fifo_data <= std_logic_vector(count(15 downto 0) + 1);
-						 --fifo_data <= std_logic_vector(count(25 downto 10) + 1);
-						 fifo_write_int <= '1';
-						 --wait_write <= '1';
-						 count <= count + 1;
-					end if;
-				end if;
+            if DEBUG then
+               fifo_write_int <= '0';
+               wait_write <= '0';
+               if (sample_run_get = '1') and (fifo_ready = '1') and
+                  ( (fifo_almost_full = '0') or ((fifo_write_int = '0') and (fifo_full = '0')) ) and
+                  (wait_write = '0') then--and (count /= 176*1024) then
+                  fifo_data <= std_logic_vector(count(15 downto 0) + 1);
+                   --fifo_data <= std_logic_vector(count(25 downto 10) + 1);
+                   fifo_write_int <= '1';
+                   --wait_write <= '1';
+                   count <= count + 1;
+               end if;
+            end if;
 
             -- check for overflow
             if (fifo_ready = '1') and (fifo_full = '1') then
