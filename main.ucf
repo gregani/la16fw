@@ -1,0 +1,140 @@
+
+# * only the IFCLK jitter for fx2 is specified with 300ps
+# * according to the coregen wizard the jitter of the dcm output will be 1.01ns for 100MHz
+#   and 0.75ns for 160Mhz so we set that on the input clock because it's propagated to the
+#   dcm outputs
+NET "clk_in" TNM_NET = "clk_in";
+TIMESPEC TS_clk_in = PERIOD "clk_in" 48 MHz HIGH 50% INPUT_JITTER 750 ps;
+NET "fifo_clk" TNM_NET = "fifo_clk";
+TIMESPEC TS_fifo_clk = PERIOD "fifo_clk" TS_clk_in HIGH 50% INPUT_JITTER 300 ps;
+
+# FIXME: what constraints to use on user clock?
+#NET "clk_user" TNM_NET = "clk_user";
+#TIMESPEC TS_clk_user = PERIOD "clk_user" 48 MHz HIGH 50% INPUT_JITTER 300 ps;
+
+# don't need dedicated routing
+PIN "clock_100M_inst/DCM_SP_inst.CLKIN" CLOCK_DEDICATED_ROUTE = FALSE;
+PIN "clock_160M_inst/DCM_SP_inst.CLKIN" CLOCK_DEDICATED_ROUTE = FALSE;
+#PIN "clock_user1_inst/DCM_SP_inst.CLKIN" CLOCK_DEDICATED_ROUTE = FALSE;
+#PIN "clock_user2_inst/DCM_SP_inst.CLKIN" CLOCK_DEDICATED_ROUTE = FALSE;
+#INST "clock_100M_inst/DCM_SP_inst" LOC=DCM_X1Y0;
+#INST "clock_160M_inst/DCM_SP_inst" LOC=DCM_X1Y0;
+
+# constraints on fifo signals (from fx2 datasheet)
+#gpif data setup time: 9.2ns
+TIMEGRP "fifo_data" OFFSET = OUT 11.6 ns AFTER "fifo_clk";
+#gpif ready setup time: 8.9ns
+NET "fifo_empty" OFFSET = OUT 11.9 ns AFTER "fifo_clk" RISING;
+#clk to data: 6.7ns
+NET "fifo_read_n" OFFSET = IN 14.1 ns VALID 20.8333 ns BEFORE "fifo_clk" RISING;
+
+# i/o pins
+NET "clk_in" LOC = P90;
+NET "led" LOC = P73;
+NET "spi_miso" LOC = P9;
+NET "spi_mosi" LOC = P30;
+NET "spi_sclk" LOC = P85;
+NET "spi_ss_n" LOC = P98;
+
+NET "clk_in" IOSTANDARD = LVCMOS33;
+NET "led" IOSTANDARD = LVCMOS33;
+NET "spi_miso" IOSTANDARD = LVCMOS33;
+NET "spi_mosi" IOSTANDARD = LVCMOS33;
+NET "spi_sclk" IOSTANDARD = LVCMOS33;
+NET "spi_ss_n" IOSTANDARD = LVCMOS33;
+
+
+NET "fifo_clk" LOC = P84;
+NET "fifo_empty" LOC = P3;
+NET "fifo_read_n" LOC = P94;
+
+NET "fifo_clk" IOSTANDARD = LVCMOS33;
+NET "fifo_empty" IOSTANDARD = LVCMOS33;
+NET "fifo_read_n" IOSTANDARD = LVCMOS33;
+
+
+NET "fifo_data[0]" LOC = P40;
+NET "fifo_data[1]" LOC = P78;
+NET "fifo_data[2]" LOC = P77;
+NET "fifo_data[3]" LOC = P49;
+NET "fifo_data[4]" LOC = P46;
+NET "fifo_data[5]" LOC = P41;
+NET "fifo_data[6]" LOC = P37;
+NET "fifo_data[7]" LOC = P93;
+NET "fifo_data[8]" LOC = P6;
+NET "fifo_data[9]" LOC = P4;
+NET "fifo_data[10]" LOC = P5;
+NET "fifo_data[11]" LOC = P44;
+NET "fifo_data[12]" LOC = P12;
+NET "fifo_data[13]" LOC = P15;
+NET "fifo_data[14]" LOC = P13;
+NET "fifo_data[15]" LOC = P10;
+
+NET "fifo_data[0]" IOSTANDARD = LVCMOS33;
+NET "fifo_data[1]" IOSTANDARD = LVCMOS33;
+NET "fifo_data[2]" IOSTANDARD = LVCMOS33;
+NET "fifo_data[3]" IOSTANDARD = LVCMOS33;
+NET "fifo_data[4]" IOSTANDARD = LVCMOS33;
+NET "fifo_data[5]" IOSTANDARD = LVCMOS33;
+NET "fifo_data[6]" IOSTANDARD = LVCMOS33;
+NET "fifo_data[7]" IOSTANDARD = LVCMOS33;
+NET "fifo_data[8]" IOSTANDARD = LVCMOS33;
+NET "fifo_data[9]" IOSTANDARD = LVCMOS33;
+NET "fifo_data[10]" IOSTANDARD = LVCMOS33;
+NET "fifo_data[11]" IOSTANDARD = LVCMOS33;
+NET "fifo_data[12]" IOSTANDARD = LVCMOS33;
+NET "fifo_data[13]" IOSTANDARD = LVCMOS33;
+NET "fifo_data[14]" IOSTANDARD = LVCMOS33;
+NET "fifo_data[15]" IOSTANDARD = LVCMOS33;
+
+INST "fifo_data<0>" TNM = fifo_data;
+INST "fifo_data<1>" TNM = fifo_data;
+INST "fifo_data<2>" TNM = fifo_data;
+INST "fifo_data<3>" TNM = fifo_data;
+INST "fifo_data<4>" TNM = fifo_data;
+INST "fifo_data<5>" TNM = fifo_data;
+INST "fifo_data<6>" TNM = fifo_data;
+INST "fifo_data<7>" TNM = fifo_data;
+INST "fifo_data<8>" TNM = fifo_data;
+INST "fifo_data<9>" TNM = fifo_data;
+INST "fifo_data<10>" TNM = fifo_data;
+INST "fifo_data<11>" TNM = fifo_data;
+INST "fifo_data<12>" TNM = fifo_data;
+INST "fifo_data<13>" TNM = fifo_data;
+INST "fifo_data<14>" TNM = fifo_data;
+INST "fifo_data<15>" TNM = fifo_data;
+
+
+NET "logic_data[0]" LOC = P28;
+NET "logic_data[1]" LOC = P29;
+NET "logic_data[2]" LOC = P32;
+NET "logic_data[3]" LOC = P33;
+NET "logic_data[4]" LOC = P34;
+NET "logic_data[5]" LOC = P36;
+NET "logic_data[6]" LOC = P43;
+NET "logic_data[7]" LOC = P50;
+NET "logic_data[8]" LOC = P52;
+NET "logic_data[9]" LOC = P56;
+NET "logic_data[10]" LOC = P57;
+NET "logic_data[11]" LOC = P60;
+NET "logic_data[12]" LOC = P61;
+NET "logic_data[13]" LOC = P62;
+NET "logic_data[14]" LOC = P64;
+NET "logic_data[15]" LOC = P65;
+
+NET "logic_data[0]" IOSTANDARD = LVCMOS33;
+NET "logic_data[1]" IOSTANDARD = LVCMOS33;
+NET "logic_data[2]" IOSTANDARD = LVCMOS33;
+NET "logic_data[3]" IOSTANDARD = LVCMOS33;
+NET "logic_data[4]" IOSTANDARD = LVCMOS33;
+NET "logic_data[5]" IOSTANDARD = LVCMOS33;
+NET "logic_data[6]" IOSTANDARD = LVCMOS33;
+NET "logic_data[7]" IOSTANDARD = LVCMOS33;
+NET "logic_data[8]" IOSTANDARD = LVCMOS33;
+NET "logic_data[9]" IOSTANDARD = LVCMOS33;
+NET "logic_data[10]" IOSTANDARD = LVCMOS33;
+NET "logic_data[11]" IOSTANDARD = LVCMOS33;
+NET "logic_data[12]" IOSTANDARD = LVCMOS33;
+NET "logic_data[13]" IOSTANDARD = LVCMOS33;
+NET "logic_data[14]" IOSTANDARD = LVCMOS33;
+NET "logic_data[15]" IOSTANDARD = LVCMOS33;
