@@ -261,6 +261,16 @@ string1:
     .db 0
     .ascii '4'
     .db 0
+    .ascii '-'
+    .db 0
+    .ascii '2'
+    .db 0
+    .ascii '0'
+    .db 0
+    .ascii '1'
+    .db 0
+    .ascii '5'
+    .db 0
 string1end:
 
 string2:
