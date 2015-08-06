@@ -1,0 +1,17 @@
+How to build the FX2 firmware:
+ * Install SDCC (Small Device C Compiler) to build the FX2 firmware
+ * Run "make fx2" to build the fx2 firmware (bin/la16fw-fx2.fw)
+
+How to build the FPGA firmware:
+ * Install Xilinx ISE 14.7 Webpack edition to build the FPGA firmware (can be downloaded from http://www.xilinx.com)
+ * Run "source path/to/Xilinx/14.7/ISE_DS/settings64.sh" to put Xilinx tools into PATH environment variable etc.
+ * Run "make fpga" to build the FPGA firmware (bin/la16fw-fpga-18.bitstream bin/la16fw-fpga-33.bitstream)
+
+How to install the firmware:
+ * Copy or link the files from the bin directory to wherever you installed sigrok:
+   cp bin/la16fw-fx2.fw /usr/local/share/sigrok-firmware/saleae-logic16-fx2.fw
+   cp bin/la16fw-fpga-18.bitstream /usr/local/share/sigrok-firmware/saleae-logic16-fpga-18.bitstream
+   cp bin/la16fw-fpga-33.bitstream /usr/local/share/sigrok-firmware/saleae-logic16-fpga-33.bitstream
+
+Notes:
+ * The "settings64.sh" from Xilinx modifies the library path such that SDCC doesn't work on my system, so first build the FX2 firmware, then the FPGA part
