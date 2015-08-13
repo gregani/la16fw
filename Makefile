@@ -1,10 +1,11 @@
-.PHONY: all fpga fx2 clean
+.PHONY: all fpga fx2 install clean
 
 TARGETS_FPGA=la16fw-fpga-18.bitstream la16fw-fpga-33.bitstream
 TARGETS_FX2=la16fw-fx2.fw
 TARGETS=$(TARGETS_FPGA) $(TARGETS_FX2)
 
 SOURCE_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+INSTALL_DIR ?= /usr/share/sigrok-firmware/
 
 all: fpga fx2
 fpga: $(addprefix bin/,$(TARGETS_FPGA))
@@ -14,7 +15,7 @@ bin/la16fw-fx2.fw: fx2/build/logic16.bix
 	cp fx2/build/logic16.bix bin/la16fw-fx2.fw
 
 fx2/build/logic16.bix:
-	$(MAKE) -C fx2
+	$(MAKE) -C fx2 bix
 
 bin/%.bitstream:
 	sed -i -re 's/(NET "logic_data\[[0-9]+\]" IOSTANDARD = )[^;]*/\1LVCMOS$(subst la16fw-fpga-,,$(basename $(notdir $@)))/g' main.ucf
@@ -31,6 +32,10 @@ mainmodule.bit: temp
 
 temp:
 	mkdir temp
+
+install: all
+	$(foreach f,$(addprefix bin/,$(TARGETS)),cp $(f) $(INSTALL_DIR);)
+	$(foreach f,$(TARGETS),ln -fs $(f) $(INSTALL_DIR)/$(subst la16fw,saleae-logic16,$(f));)
 
 clean:
 	-rm $(addprefix bin/,$(TARGETS))

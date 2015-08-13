@@ -8,7 +8,8 @@ How to build the FPGA firmware:
  * Run "make fpga" to build the FPGA firmware (bin/la16fw-fpga-18.bitstream bin/la16fw-fpga-33.bitstream)
 
 How to install the firmware:
- * Copy or link the files from the bin directory to wherever you installed sigrok:
+ * Run "INSTALL_DIR=/path/to/sigrok-firmware make install"
+ * Or copy or link the files from the bin directory to wherever you installed sigrok:
    cp bin/la16fw-fx2.fw /usr/local/share/sigrok-firmware/saleae-logic16-fx2.fw
    cp bin/la16fw-fpga-18.bitstream /usr/local/share/sigrok-firmware/saleae-logic16-fpga-18.bitstream
    cp bin/la16fw-fpga-33.bitstream /usr/local/share/sigrok-firmware/saleae-logic16-fpga-33.bitstream
