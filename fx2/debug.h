@@ -1,7 +1,7 @@
 /*
  * This file is part of the la16fw project.
  *
- * Copyright (C) 2014-2015 Gregor Anich
+ * Copyright (C) 2015 Gregor Anich
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#ifndef GPIF_STUFF_H
-#define GPIF_STUFF_H
+#ifndef DEBUG_H
+#define DEBUG_H
 
-#include <fx2types.h>
+#ifdef DEBUG
+# include <stdio.h>
+#else
+# define printf(...) do {} while (0)
+#endif
 
-void gpif_stuff_init();
-void gpif_stuff_start();
-void gpif_stuff_abort();
-
-#endif /* GPIF_STUFF_H */
+#endif /* DEBUG_H */

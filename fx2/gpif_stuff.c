@@ -26,8 +26,7 @@
 #include <fx2regs.h>
 #include <gpif.h>
 
-#include <stdio.h>
-
+#include "debug.h"
 
 #define SYNCDELAY SYNCDELAY4
 
@@ -66,14 +65,14 @@
 // CTL4         0         0         0         0         0         0         0         0    
 // CTL5         0         0         0         0         0         0         0         0    
 
-static const char __xdata WaveData_FIFORead[32] =     
+static const BYTE __xdata WaveData_FIFORead[32] =     
 {                                      
 /* LenBr */ 0x81,     0xB8,     0x01,     0x01,     0x01,     0x01,     0x01,     0x07,
 /* Opcode*/ 0x01,     0x03,     0x02,     0x02,     0x02,     0x02,     0x02,     0x00,
 /* Output*/ 0x05,     0x04,     0x04,     0x04,     0x04,     0x04,     0x04,     0x05,
 /* LFun  */ 0x70,     0x2D,     0x00,     0x00,     0x00,     0x00,     0x00,     0x3F,
 };
-static const char __xdata WaveData_Unused[32] =     
+static const BYTE __xdata WaveData_Unused[32] =     
 {                                      
 /* LenBr */ 0x01,     0x01,     0x01,     0x01,     0x01,     0x01,     0x01,     0x07,
 /* Opcode*/ 0x00,     0x00,     0x00,     0x00,     0x00,     0x00,     0x00,     0x00,
@@ -105,9 +104,9 @@ gpif_stuff_init()
     GPIFABORT = 0xff;
     SYNCDELAY;
 
-    GPIFREADYCFG = (1<<7) | /* INTRDY = 1 */
-                   (1<<6) | /* pass RDY signals through 2 FFs for syncing */
-                   (1<<5); /* use transaction count expiration as RDY5 flag */
+    //GPIFREADYCFG = (1<<7) | /* INTRDY = 1 */
+    //               (1<<6) | /* pass RDY signals through 2 FFs for syncing */
+    //               (1<<5); /* use transaction count expiration as RDY5 flag */
     SYNCDELAY;
     GPIFCTLCFG = (1<<4); /* CTL4 = 1 ...? */
     SYNCDELAY;
@@ -117,11 +116,6 @@ gpif_stuff_init()
     SYNCDELAY;
     GPIFWFSELECT = (1<<6) | (1<<4) | (1<<2) | (0<<0); /* fifo read = 0, others = 1 */
     SYNCDELAY;
-
-    /*SYNCDELAY;
-    GPIFADRH = 0x00;
-    SYNCDELAY;
-    GPIFADRL = 0x00;*/
 
     FLOWSTATE = 0;
     FLOWLOGIC = 0;
@@ -161,9 +155,9 @@ gpif_stuff_init()
              (0<<3) | /* 1=1024, 0=512 bytes */
              (0<<1) | (0<<0); /* quad buffered */
     SYNCDELAY;
-    EP2GPIFPFSTOP = (0<<0); /* stop on transaction count */
-    //EP2GPIFPFSTOP = (1<<0); /* stop on fifo flag */
-    //EP2GPIFFLGSEL = (1<<1) | (0<<0); /* fifo flag = full flag */
+    //EP2GPIFPFSTOP = (0<<0); /* stop on transaction count */
+    EP2GPIFPFSTOP = (1<<0); /* stop on fifo flag */
+    EP2GPIFFLGSEL = (1<<1) | (0<<0); /* fifo flag = full flag */
     SYNCDELAY;
     EP2FIFOCFG = bmWORDWIDE | bmAUTOIN;
     SYNCDELAY;
@@ -179,60 +173,36 @@ gpif_stuff_init()
 void
 gpif_stuff_start()
 {
-    /* abort gpif */
-    GPIFABORT = 0xff;
-    SYNCDELAY;
+    gpif_stuff_abort(); /* reset FIFO */
     
-    while (!GPIFDONE);
-
-    RESETFIFO(2);
-    RESETFIFOS();
-    
-    /* trigger ep2 read */
-    gpif_active = TRUE;
-    INPKTEND = 0x82;
+    gpif_set_tc16(1);
     SYNCDELAY;
-    INPKTEND = 0x82;
-    SYNCDELAY;
-    INPKTEND = 0x82;
-    SYNCDELAY;
-    INPKTEND = 0x82;
-    SYNCDELAY;
-    
-    EP2BCH = 0x00;
-    SYNCDELAY;
-    EP2BCL = 0x00;
-    SYNCDELAY;
-
-    gpif_set_tc16(GPIF_TRANSACTION_COUNT);
     gpif_fifo_read(GPIF_EP2);
+    SYNCDELAY;
+    gpif_active = TRUE;
 }
 
 
 void
 gpif_stuff_abort()
 {
+    //if (!gpif_active)
+    //    return;
+    
     GPIFABORT = 0xff;
     SYNCDELAY;
+    while (!(GPIFTRIG & (1<<7)));
+    
+    FIFORESET = 0x80;
+    SYNCDELAY;
+    EP2FIFOCFG &= ~bmAUTOIN;
+    SYNCDELAY;
+    FIFORESET = 2;
+    SYNCDELAY;
+    EP2FIFOCFG |= bmAUTOIN;
+    SYNCDELAY;
+    FIFORESET = 0;
+    SYNCDELAY;
+
     gpif_active = FALSE;
 }
-
-
-void
-gpif_stuff_loop()
-{
-    if (!EP2FULL && gpif_active)
-    {
-        if (GPIFDONE)
-        {
-            /*EP2BCH = 0x02;
-            SYNCDELAY;
-            EP2BCL = 0x00;
-            SYNCDELAY;*/
-            
-            gpif_set_tc16(GPIF_TRANSACTION_COUNT);
-            gpif_fifo_read(GPIF_EP2);
-        }
-    }
-}
-

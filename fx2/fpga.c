@@ -24,7 +24,7 @@
 #include <fx2macros.h>
 #include <fx2regs.h>
 
-#include <stdio.h>
+#include "debug.h"
 
 
 #define SYNCDELAY SYNCDELAY4

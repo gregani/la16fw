@@ -25,16 +25,10 @@
 #include <fx2macros.h>
 #include <i2c.h>
 
-#include <stdio.h>
-
 #include "fpga.h"
 #include "gpif_stuff.h"
 
-#ifdef DEBUG
-#include <stdio.h>
-#else
-#define printf(...)
-#endif
+#include "debug.h"
 
 #define  SYNCDELAY SYNCDELAY4
 
@@ -61,6 +55,7 @@ static __xdata BYTE led_table[64] = {0};
 static BOOL led_run = FALSE;
 static BOOL led_repeat = FALSE;
 static BYTE led_div = 0;
+
 
 /* logic16 specific ep1 encode/decode functions */
 
@@ -122,14 +117,12 @@ handle_set_interface(BYTE interface, BYTE alt_interface)
     if (interface != 0 || alt_interface != 0)
         return FALSE;
     
-#if 1
     RESETTOGGLE(0x01); /* ep1 out */
     RESETTOGGLE(0x81); /* ep1 in */
     RESETTOGGLE(0x82); /* ep2 in */
     RESETTOGGLE(0x06); /* ep6 out */
     
     RESETFIFO(2);
-#endif
     
     return TRUE;
 }
@@ -198,7 +191,7 @@ ep_init()
 void
 main_init()
 {
-    REVCTL = 3;
+    REVCTL = bmNOAUTOARM | bmSKIPCOMMIT;
     SYNCDELAY;
     SETCPUFREQ(CLK_48M);
     SYNCDELAY;
@@ -242,8 +235,8 @@ main_loop()
         ep1_decrypt(buf_out, buf_out, len_out);
         
         /* handle command */
-        if (buf_out[0] != CMD_FPGA_UPLOAD_DATA)
-            printf("cmd 0x%x len %d\r\n", buf_out[0], len_out);
+        //if (buf_out[0] != CMD_FPGA_UPLOAD_DATA)
+        //    printf("cmd 0x%x len %d\r\n", buf_out[0], len_out);
         switch (buf_out[0])
         {
         case CMD_WRITE_EEPROM:
@@ -373,9 +366,6 @@ main_loop()
         EP1OUTBC = 0xff;
         SYNCDELAY;
     }
-    
-    /* gpif stuff */
-    gpif_stuff_loop();
     
     /* led stuff */
     if (TF2)
