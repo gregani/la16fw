@@ -1,3 +1,5 @@
+There are binaries in the bin directory, so you don't have to build this yourself!
+
 How to build the FX2 firmware:
  * Install SDCC (Small Device C Compiler) to build the FX2 firmware
  * Run "make fx2" to build the fx2 firmware (bin/la16fw-fx2.fw)
